@@ -1,5 +1,7 @@
 # CorbeauSplat
 
+![CorbeauSplat Interface](assets/screenshot.png)
+
 **CorbeauSplat** is an all-in-one Gaussian Splatting automation tool designed specifically for **macOS Silicon** (M1/M2/M3). It streamlines the entire workflow from raw video/images to a fully trained and viewable 3D scene (Gaussian Splat).
 
 ## 🚀 What it does
@@ -61,25 +63,7 @@ It is designed to be "click-and-run", handling dependency checks and process man
 
 You can also use the tool directly from the terminal for automated workflows.
 
-**Training (Brush):**
-```bash
-python3 main.py --train --input path/to/colmap_dir --output path/to/output_dir --iterations 30000
-```
-
-**Viewing (SuperSplat):**
-```bash
-python3 main.py --view --input path/to/model.ply
-```
-
-**Prediction (ML-Sharp):**
-```bash
-python3 main.py --predict --input path/to/image.jpg --output path/to/output_dir
-```
-
-**COLMAP Dataset Creation:**
-```bash
-python3 main.py --input path/to/video.mp4 --output path/to/output_dir --type video
-```
+👉 **[See the full CLI Documentation here](CLI.md)**
 
 ## 👏 Acknowledgments & Credits
 
