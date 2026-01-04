@@ -1,6 +1,6 @@
 # CorbeauSplat
 
-**CorbeauSplat** is an all-in-one Gaussian Splatting automation tool designed specifically for **macOS Silicon** (M1/M2/M3). It streamlines the entire workflow from raw video/images to a fully trained and viewable 3D scene (Gaussian Splat).
+**CorbeauSplat** is an all-in-one Gaussian Splatting automation tool designed specifically for **macOS Silicon** . It streamlines the entire workflow from raw video/images to a fully trained and viewable 3D scene (Gaussian Splat).
 
 ![CorbeauSplat Interface](assets/screenshot.png)
 
@@ -28,7 +28,7 @@ It is designed to be "click-and-run", handling dependency checks and process man
 ## 🛠 Prerequisites & Installation
 
 ### Requirements
-- **macOS** (Silicon M1/M2/M3 recommended)
+- **macOS** (Silicon recommended)
 - **Homebrew** (for installing system dependencies like COLMAP and FFmpeg)
 - **Git**
 
