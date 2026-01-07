@@ -7,14 +7,16 @@
 ## 🚀 What it does
 
 This application provides a unified Graphical User Interface (GUI) to orchestrate the following steps:
-1.  **Data Preparation**: Extracts frames from videos using hardware-accelerated FFmpeg.
+1.  **Project Management**: Automatically organizes your outputs into structured project folders with images, sparse data, and checkpoints.
 2.  **Sparse Reconstruction**: Automates **COLMAP** feature extraction, matching, and mapping. Supports **Glomap** as a modern alternative mapper.
 3.  **Undistortion**: Automatically undistorts images for optimal training quality.
 4.  **Training**: Integrates **Brush** to train Gaussian Splats directly on your Mac.
+    -   **Densification Control**: Includes presets (Fast, Standard, Aggressive) and advanced parameters.
+    -   **Auto-Refine**: Resume training seamlessly from your last checkpoint.
 5.  **Visualization**: Includes a built-in tab running **SuperSplat** for immediate local viewing and editing of your PLY files.
 6.  **Single Image to 3D**: (Bonus) Uses **Apple ML Sharp** to generate a 3D model from a single 2D image.
 
-It is designed to be "click-and-run", handling dependency checks and process management for you.
+It is designed to be "click-and-run", handling dependency checks, process management, and **session persistence** for you.
 
 ## ✍️ A Note from the Author
 
@@ -30,6 +32,7 @@ It is designed to be "click-and-run", handling dependency checks and process man
 
 ### Requirements
 - **macOS** (Silicon recommended)
+- **Xcode Command Line Tools** (Required for compiling custom engines like Glomap or Brush)
 - **Homebrew** (for installing system dependencies like COLMAP and FFmpeg)
 - **Git**
 
@@ -49,84 +52,23 @@ It is designed to be "click-and-run", handling dependency checks and process man
 ## 📖 How to Use
 
 1.  **Configuration Tab**: 
-    - Select your input (Video or Folder of images).
-    - Choose an output folder.
-    - Click **"Create COLMAP Dataset"**.
-2.  **Params Tab**: (Optional) Tweak advanced COLMAP settings if needed. The defaults are optimized for Apple Silicon.
+    -   Select your input (Video or Folder of images).
+    -   Define a **Project Name** (your files will be saved in `[Output Folder]/[Project Name]`).
+    -   Click **"Create COLMAP Dataset"**.
+2.  **Params Tab**: (Optional) Tweak advanced COLMAP settings or enable **Glomap**.
 3.  **Brush Tab**: 
-    - Once COLMAP finishes, you can start training directly.
-    - Click **"Start Brush Training"**.
+    -   **Auto-Refine**: Choose "Refine" mode to resume training from the latest checkpoint.
+    -   **Presets**: Use specific densification strategies (e.g., "Aggressive Densification").
+    -   Click **"Start Brush Training"**.
 4.  **SuperSplat Tab**: 
-    - Load your trained `.ply` file.
-    - Click **"Start Servers"** to launch the viewer locally.
+    -   Load your trained `.ply` file.
+    -   Click **"Start Servers"** to launch the viewer locally.
 
-### Command Line Interface (CLI)
+### ⌨️ Command Line Interface (CLI)
 
-CorbeauSplat exposes all its features via the command line, making it easy to integrate into automated pipelines or run on headless machines.
+CorbeauSplat exposes all its features via the command line.
 
-#### 🚀 Quick Usage
-
-**1. Create a COLMAP Dataset**
-This runs the full pipeline: video frame extraction -> feature extraction -> matching -> sparse reconstruction -> undistortion.
-
-```bash
-# From Video
-python3 main.py --input /path/to/video.mp4 --output /path/to/project_folder --type video
-
-# From Images folder
-python3 main.py --input /path/to/images --output /path/to/project_folder --type images
-```
-
-**2. Train a Splat (Brush)**
-Train a Gaussian Splatting model using the dataset created in step 1.
-
-```bash
-python3 main.py --train --input /path/to/project_folder --output /path/to/output_model --iterations 30000
-```
-*Note: `--input` must be the directory containing the 'images' and 'sparse' folders.*
-
-**3. Visualise (SuperSplat)**
-Launch a local web viewer for your trained `.ply` file.
-
-```bash
-python3 main.py --view --input /path/to/output_model/splat.ply
-```
-
-**4. Single Image to 3D (ML-Sharp)**
-Use Apple's machine learning model to generate a splat from a single photo.
-
-```bash
-python3 main.py --predict --input photo.jpg --output /path/to/output_dir
-```
-
-#### ⚙️ Advanced Options
-
-**General**
-| Flag | Description |
-| :--- | :--- |
-| `--gui` | Force launch the Graphical Interface (default if no args are passed). |
-| `--help` | Show the full help message with all available flags. |
-
-**COLMAP Options**
-| Flag | Description |
-| :--- | :--- |
-| `--fps <int>` | Frames per second for video extraction (Default: 5). |
-| `--camera_model <str>` | COLMAP camera model (SIMPLE_RADIAL, PINHOLE, etc.). |
-| `--undistort` | Add this flag to run image undistortion after reconstruction. |
-| `--use_glomap` | Use [Glomap](https://github.com/colmap/glomap) instead of standard COLMAP mapper. |
-
-**Brush Options**
-| Flag | Description |
-| :--- | :--- |
-| `--iterations <int>` | Training steps (Default: 30000). |
-| `--sh_degree <int>` | Spherical Harmonics degree (Default: 3). |
-| `--device <str>` | Force device (e.g., `mps`, `cpu`). Default: `auto`. |
-
-**SuperSplat Options**
-| Flag | Description |
-| :--- | :--- |
-| `--port <int>` | Web server port (Default: 3000). |
-| `--data_port <int>` | Data server port (Default: 8000). |
+� **[See CLI.md for full command line documentation](CLI.md)**
 
 ## 👏 Acknowledgments & Credits
 
