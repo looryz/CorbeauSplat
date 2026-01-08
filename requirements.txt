@@ -2,3 +2,4 @@ PyQt6
 requests
 rerun-sdk
 numpy
+send2trash

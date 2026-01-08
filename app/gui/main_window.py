@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import shutil
+import send2trash
 from PyQt6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QTabWidget, QMessageBox, QFileDialog, QApplication, QLabel
 )
@@ -156,41 +157,62 @@ class ColmapGUI(QMainWindow):
                 QMessageBox.warning(self, tr("msg_error"), f"{tr('msg_error')}:\n{message}")
             
     def delete_dataset(self):
-        """Supprime un dataset existant"""
+        """Supprime le contenu d'un dataset existant"""
         output_dir = self.config_tab.get_output_path()
+        project_name = self.config_tab.get_project_name()
         
         if not output_dir:
             QMessageBox.warning(self, tr("msg_warning"), tr("err_no_paths"))
             return
         
-        if not os.path.exists(output_dir):
+        # 1. Target: output_dir/project_name
+        target_path = os.path.join(output_dir, project_name)
+        
+        # 2. Fallback: output_dir (if user pointed directly to it)
+        # We check if it looks like a dataset
+        is_direct_target = False
+        if not os.path.exists(target_path):
+            if (os.path.exists(os.path.join(output_dir, "database.db")) or 
+                os.path.exists(os.path.join(output_dir, "sparse"))):
+                target_path = output_dir
+                is_direct_target = True
+        
+        if not os.path.exists(target_path):
             QMessageBox.information(self, "Info", tr("err_path_not_exists"))
             return
-            
+
+        # Double check safety: ensure we are deleting a dataset
         has_dataset = (
-            os.path.exists(os.path.join(output_dir, "database.db")) or
-            os.path.exists(os.path.join(output_dir, "sparse")) or
-            os.path.exists(os.path.join(output_dir, "images"))
+            os.path.exists(os.path.join(target_path, "database.db")) or
+            os.path.exists(os.path.join(target_path, "sparse")) or
+            os.path.exists(os.path.join(target_path, "images"))
         )
         
         if not has_dataset:
             reply = QMessageBox.question(
                 self, tr("msg_warning"),
-                tr("confirm_delete_nodata", output_dir),
+                tr("confirm_delete_nodata", target_path),
                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
             )
         else:
             reply = QMessageBox.question(
                 self, tr("msg_warning"),
-                tr("confirm_delete", output_dir),
+                f"Voulez-vous mettre a la corbeille le contenu du dossier :\n\n{target_path}",
                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
             )
             
         if reply == QMessageBox.StandardButton.Yes:
             try:
-                shutil.rmtree(output_dir)
-                self.logs_tab.append_log(f"Dataset supprime: {output_dir}") # Keep debug log as it is or add key? Let's leave for now
-                QMessageBox.information(self, tr("msg_success"), "Dataset supprime avec succes")
+                # Empty the directory by moving content to trash
+                for filename in os.listdir(target_path):
+                    file_path = os.path.join(target_path, filename)
+                    try:
+                        send2trash.send2trash(file_path)
+                    except Exception as e:
+                        print(f"Failed to trash {file_path}. Reason: {e}")
+
+                self.logs_tab.append_log(f"Contenu du dataset mis a la corbeille: {target_path}")
+                QMessageBox.information(self, tr("msg_success"), "Contenu du dataset mis a la corbeille avec succes")
             except Exception as e:
                 QMessageBox.critical(self, tr("msg_error"), f"Impossible de supprimer le dataset:\n{str(e)}")
                 

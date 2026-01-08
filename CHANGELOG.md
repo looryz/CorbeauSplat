@@ -1,5 +1,13 @@
 # Changelog
 
+## [v0.19] - 2026-01-08
+
+### Added
+-   **Auto Update Check**: The launcher (`run.command`) now checks for new versions on startup and prompts the user to update.
+
+### Fixed
+-   **Dataset Deletion Safety**: Fixed a critical bug where "Delete Dataset" would remove the entire output folder. It now correctly targets the project subdirectory and only deletes its content, preserving the folder structure.
+
 ## [v0.18] - 2026-01-07
 
 ### Added

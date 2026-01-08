@@ -48,6 +48,21 @@ class BrushEngine:
         # Environnement
         env = os.environ.copy()
         
+        # Gestions du device via WGPU
+        # "mps" -> metal, "cuda" -> vulkan/custom (sur Mac c'est metal)
+        # On force le backend pour etre sur.
+        if device == "mps":
+            env["WGPU_BACKEND"] = "metal"
+            env["WGPU_POWER_PREF"] = "high_performance"
+            print("Force WGPU_BACKEND=metal")
+        elif device == "cuda":
+            env["WGPU_BACKEND"] = "vulkan" # Souvent le mapping pour cuda cross-platform ou dx12
+            env["WGPU_POWER_PREF"] = "high_performance"
+        elif device == "cpu":
+            # Pas de variable specifique standard simple pour force CPU sur wgpu-hal sans dependance
+            # Mais on peut ne pas mettre de hint
+            pass
+        
         # Lancement
         print(f"Lancement Brush: {' '.join(cmd)}")
         
