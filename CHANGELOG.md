@@ -1,12 +1,16 @@
 # Changelog
 
-## [v0.19] - 2026-01-08
+## [v0.20] - 2026-01-08
 
 ### Added
--   **Auto Update Check**: The launcher (`run.command`) now checks for new versions on startup and prompts the user to update.
+-   **Dependency Automation**: The installation script now automatically installs missing tools (Rust, Node.js, CMake, Ninja) via Homebrew or official installers, making setup much easier.
 
 ### Fixed
--   **Dataset Deletion Safety**: Fixed a critical bug where "Delete Dataset" would remove the entire output folder. It now correctly targets the project subdirectory and only deletes its content, preserving the folder structure.
+-   **Documentation**: Updated README with correct installation instructions and removed manual dependency steps.
+-   **Code Safety**: Added safety checks for directory deletion in the "Refine" workflow.
+-   **Cleanup**: Removed unused code and improved internal logic.
+
+## [v0.19] - 2026-01-08
 
 ## [v0.18] - 2026-01-07
 
