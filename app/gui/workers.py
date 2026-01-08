@@ -75,7 +75,6 @@ class BrushWorker(BaseWorker):
             
             # Gestion Refine Auto (Prioritaire sur Init PLY manuel)
             refine_mode = self.params.get("refine_mode")
-            # self.log_signal.emit(f"Refine Mode: {refine_mode}") # Verbose
             
             if refine_mode:
                 self.log_signal.emit("Configuration Refine Auto...")

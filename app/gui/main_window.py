@@ -361,7 +361,7 @@ class ColmapGUI(QMainWindow):
         if success:
             QMessageBox.information(self, tr("msg_success"), f"Brush terminé!\n{message}")
         else:
-            if "Arrete" not in message: # TODO: standardize cancel message
+            if "Arrete" not in message:
                 QMessageBox.warning(self, tr("msg_error"), f"Erreur Brush:\n{message}")
 
     def run_sharp(self):
