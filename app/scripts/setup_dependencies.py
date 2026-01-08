@@ -66,14 +66,50 @@ def check_xcode_tools():
     except:
         return False
 
-# --- INSTALLERS ---
+# --- INSTALLERS HELPERS ---
+
+def install_rust_toolchain():
+    print("Installation de Rust (cargo)...")
+    try:
+        # Install rustup non-interactively
+        subprocess.check_call("curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y", shell=True)
+        
+        # Add to current path for this session
+        cargo_bin = os.path.expanduser("~/.cargo/bin")
+        if os.path.exists(cargo_bin):
+            os.environ["PATH"] = cargo_bin + os.pathsep + os.environ["PATH"]
+            print("Rust installe et ajoute au PATH.")
+            return True
+    except Exception as e:
+        print(f"Erreur installation Rust: {e}")
+    return False
+
+def install_node_js():
+    print("Installation de Node.js via Homebrew...")
+    try:
+        subprocess.check_call(["brew", "install", "node"])
+        return True
+    except Exception as e:
+        print(f"Erreur installation Node.js: {e}")
+    return False
+
+def install_build_tools():
+    print("Installation de CMake & Ninja via Homebrew...")
+    try:
+        subprocess.check_call(["brew", "install", "cmake", "ninja"])
+        return True
+    except Exception as e:
+        print(f"Erreur installation Build Tools: {e}")
+    return False
+
+# --- ENGINE INSTALLERS ---
 
 def install_brush(engines_dir, version_file, target_version=None):
     print("--- Installation de Brush (Gaussian Splatting Engine) ---")
     if not check_cargo():
-        print("ERREUR: 'cargo' (Rust) n'est pas installe.")
-        print("Veuillez installer Rust: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh")
-        return False
+        print("Rust manquant. Tentative d'installation...")
+        if not install_rust_toolchain():
+            return False
         
     if target_version is None: target_version = get_remote_version(BRUSH_REPO)
 
@@ -141,8 +177,9 @@ def install_sharp(engines_dir, version_file, target_version=None):
 def install_supersplat(engines_dir, version_file, target_version=None):
     print("--- Installation de SuperSplat ---")
     if not check_node():
-        print("ERREUR: 'node'/'npm' requis. https://nodejs.org/")
-        return False
+        print("Node.js manquant. Tentative d'installation...")
+        if not install_node_js():
+            return False
         
     target_dir = os.path.join(engines_dir, "supersplat")
     try:
@@ -195,8 +232,9 @@ def install_glomap(engines_dir, version_file, target_version=None):
              return False
 
     if not check_cmake_ninja():
-        print("ERREUR: 'cmake'/'ninja' requis. (brew install cmake ninja)")
-        return False
+        print("CMake/Ninja manquants. Tentative d'installation...")
+        if not install_build_tools():
+            return False
         
     source_dir = os.path.join(engines_dir, "glomap-source")
     try:
