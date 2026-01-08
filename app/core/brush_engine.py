@@ -32,10 +32,7 @@ class BrushEngine:
         if sh_degree:
              cmd.extend(["--sh-degree", str(sh_degree)])
 
-        # Note: --device n'est pas liste dans l'aide de brush, on laisse le moteur gerer ou via custom_args
-        # if device and device != "auto":
-        #      cmd.extend(["--device", device])
-            
+
         if with_viewer:
             cmd.append("--with-viewer")
             

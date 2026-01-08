@@ -99,8 +99,12 @@ class BrushWorker(BaseWorker):
                     
                     # 2. Créer dossier Refine
                     refine_dir = os.path.join(resolved_input, "Refine")
-                    if os.path.exists(refine_dir):
-                        shutil.rmtree(refine_dir) # On repart propre ? Ou on garde ? Mieux vaut clean pour être sûr de l'init
+                    
+                    # Safety check: Ensure refine_dir is inside resolved_input
+                    if os.path.abspath(refine_dir).startswith(os.path.abspath(resolved_input)):
+                        if os.path.exists(refine_dir):
+                            shutil.rmtree(refine_dir) 
+                    
                     os.makedirs(refine_dir, exist_ok=True)
                     
                     # 3. Copier init.ply
