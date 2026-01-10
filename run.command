@@ -44,15 +44,42 @@ fi
 echo "Activation de l'environnement..."
 source $VENV_DIR/bin/activate
 
+# Mise a jour de pip
+echo "Mise a jour de pip..."
+pip install --upgrade pip > /dev/null 2>&1
+
 # Toujours vérifier/installer les dépendances
-if [ -f "requirements.txt" ]; then
-    # On redirige la sortie standard vers null pour éviter le spam si tout est déjà là
-    # mais on garde les erreurs
-    echo "Verification des dependances Python..."
-    pip install -r requirements.txt > /dev/null
+if [ -f "requirements.lock" ]; then
+    DEP_FILE="requirements.lock"
+    echo "Utilisation de requirements.lock pour une installation reproductible."
+elif [ -f "requirements.txt" ]; then
+    DEP_FILE="requirements.txt"
+    echo "Utilisation de requirements.txt (requirements.lock manquant)."
 else
-    echo "ERREUR: requirements.txt non trouve!"
+    echo "ERREUR: Ni requirements.lock ni requirements.txt trouves!"
     exit 1
+fi
+
+echo "Verification des dependances Python ($DEP_FILE)..."
+# Capture output and exit code
+if ! pip install -r $DEP_FILE > /dev/null 2>&1; then
+    echo "ERREUR: L'installation des dependances a echoue."
+    echo "Tentative de reinstallation avec affichage des erreurs :"
+    pip install -r $DEP_FILE
+    echo "Veuillez corriger les erreurs ci-dessus avant de relancer."
+    exit 1
+fi
+
+# Verification specifique pour PyQt6 qui pose souvent probleme
+if ! python3 -c "import PyQt6" > /dev/null 2>&1; then
+    echo "ERREUR: PyQt6 semble manquant malgre l'installation."
+    echo "Tentative d'installation forcee de PyQt6..."
+    pip install PyQt6
+    
+    if ! python3 -c "import PyQt6" > /dev/null 2>&1; then
+            echo "ECHEC FATAL: Impossible d'importer PyQt6."
+            exit 1
+    fi
 fi
 
 # Vérification et Installation des dépendances externes (Brush)

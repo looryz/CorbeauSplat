@@ -1,5 +1,16 @@
 # Changelog
 
+## [v0.21] - 2026-01-10
+
+### Fixed
+-   **Robust Installation**: Significantly improved the `run.command` launch script.
+    -   Silent failures during dependency installation are now detected.
+    -   Detailed error logs are shown to the user if installation fails.
+    -   Added explicit health check for `PyQt6` to prevent crash-on-launch loops.
+-   **Dependency Management**: 
+    -   Added `requirements.lock` to ensure reproducible builds.
+    -   Added automatic `pip` upgrade check.
+
 ## [v0.20] - 2026-01-08
 
 ### Added
