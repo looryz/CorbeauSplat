@@ -6,6 +6,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import pyqtSignal
 from app.core.i18n import tr
 from shutil import which
+from app.gui.widgets.drop_line_edit import DropLineEdit
 
 class SharpTab(QWidget):
     """Onglet de configuration Apple ML Sharp"""
@@ -38,7 +39,7 @@ class SharpTab(QWidget):
         
         # Input Path (File or Folder)
         input_layout = QHBoxLayout()
-        self.input_path = QLineEdit()
+        self.input_path = DropLineEdit()
         self.input_path.setPlaceholderText("Dossier d'images ou fichier image unique")
         self.btn_browse_input_dir = QPushButton("Dossier")
         self.btn_browse_input_dir.clicked.connect(self.browse_input_dir)
@@ -52,7 +53,7 @@ class SharpTab(QWidget):
         
         # Output Path
         output_layout = QHBoxLayout()
-        self.output_path = QLineEdit()
+        self.output_path = DropLineEdit()
         self.output_path.setPlaceholderText("Dossier de sortie pour les splats")
         self.btn_browse_output = QPushButton("...")
         self.btn_browse_output.setMaximumWidth(40)
@@ -70,7 +71,7 @@ class SharpTab(QWidget):
         
         # Checkpoint
         ckpt_layout = QHBoxLayout()
-        self.ckpt_path = QLineEdit()
+        self.ckpt_path = DropLineEdit()
         self.ckpt_path.setPlaceholderText("Optionnel (Auto-download si vide)")
         self.btn_browse_ckpt = QPushButton("...")
         self.btn_browse_ckpt.setMaximumWidth(40)

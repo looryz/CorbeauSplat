@@ -2,9 +2,19 @@
 
 ## [v0.22] - 2026-01-13
 
+### Added
+-   **Drag and Drop**: Added support for dragging files and folders into input fields in Config, Brush, and Sharp tabs.
+-   **Auto-Detection**: Dragging a video file or folder in Config Tab automatically selects the correct input type.
+
 ### Fixed
+-   **System Stability**: Fixed a bug where running the application would freeze drag-and-drop operations in macOS Finder.
 -   **Python 3.14 Support**: Updated `numpy`, `pyarrow`, and `rerun-sdk` to versions compatible with Python 3.14 on macOS.
 -   **Localization**: Fixed missing "Project Name" translation in English.
+
+### Security & Optimization (Audit)
+-   **Performance**: Implemented parallel image copying for faster dataset preparation (using `ThreadPoolExecutor`).
+-   **Security**: Hardened local data server by restricting CORS to `localhost` origins.
+-   **Refactoring**: Moved file deletion logic from GUI to Core engine for better separation of concerns.
 
 ## [v0.21] - 2026-01-10
 

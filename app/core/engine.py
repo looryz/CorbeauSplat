@@ -5,6 +5,7 @@ import json
 import platform
 from .params import ColmapParams
 from .system import is_apple_silicon, get_optimal_threads, resolve_binary
+import send2trash
 
 class ColmapEngine:
     """Moteur d'exécution COLMAP indépendant de l'interface graphique"""
@@ -64,11 +65,19 @@ class ColmapEngine:
                 # Copie des images dans le dossier images du projet
                 self.log("Copie des images sources vers le dossier de travail...")
                 import shutil
+                import concurrent.futures
+                
                 try:
                     src_files = [f for f in os.listdir(self.input_path) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
-                    for f in src_files:
-                        if self.is_cancelled(): return False, "Arrete par l'utilisateur"
-                        shutil.copy2(os.path.join(self.input_path, f), os.path.join(images_dir, f))
+                    
+                    def copy_image(filename):
+                        if self.is_cancelled(): return
+                        shutil.copy2(os.path.join(self.input_path, filename), os.path.join(images_dir, filename))
+                        
+                    with concurrent.futures.ThreadPoolExecutor() as executor:
+                        # Map returns an iterator, we need to iterate to raise exceptions if any
+                        list(executor.map(copy_image, src_files))
+                        
                     self.log(f"{len(src_files)} images copiees.")
                 except Exception as e:
                     return False, f"Erreur copie images: {e}"
@@ -335,3 +344,25 @@ class ColmapEngine:
             except subprocess.TimeoutExpired:
                 self._current_process.kill()
                 self._current_process.wait()
+
+    @staticmethod
+    def delete_project_content(target_path):
+        """Supprime le contenu d'un dossier de projet de manière sécurisée (Corbeille)"""
+        if not os.path.exists(target_path):
+            return False, "Le dossier n'existe pas"
+            
+        try:
+            # Empty the directory by moving content to trash (except images)
+            for filename in os.listdir(target_path):
+                if filename == "images":
+                    continue
+                    
+                file_path = os.path.join(target_path, filename)
+                try:
+                    send2trash.send2trash(file_path)
+                except Exception as e:
+                    print(f"Failed to trash {file_path}. Reason: {e}")
+                    
+            return True, "Contenu mis a la corbeille"
+        except Exception as e:
+            return False, str(e)

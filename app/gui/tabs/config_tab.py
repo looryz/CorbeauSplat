@@ -5,6 +5,7 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import pyqtSignal, Qt
 from app.core.i18n import tr, set_language, get_current_lang
+from app.gui.widgets.drop_line_edit import DropLineEdit
 
 class ConfigTab(QWidget):
     """Onglet de configuration principale"""
@@ -80,7 +81,8 @@ class ConfigTab(QWidget):
         # Chemin
         path_layout = QHBoxLayout()
         path_layout.addWidget(QLabel(tr("label_path")))
-        self.input_path = QLineEdit()
+        self.input_path = DropLineEdit()
+        self.input_path.fileDropped.connect(self.on_input_dropped)
         path_layout.addWidget(self.input_path)
         self.btn_browse_input = QPushButton(tr("btn_browse"))
         self.btn_browse_input.clicked.connect(self.browse_input)
@@ -111,7 +113,7 @@ class ConfigTab(QWidget):
         
         path_out_layout = QHBoxLayout()
         path_out_layout.addWidget(QLabel(tr("label_out_path")))
-        self.output_path = QLineEdit()
+        self.output_path = DropLineEdit()
         path_out_layout.addWidget(self.output_path)
         self.btn_browse_output = QPushButton(tr("btn_browse"))
         self.btn_browse_output.clicked.connect(self.browse_output)
@@ -232,6 +234,17 @@ class ConfigTab(QWidget):
         path = QFileDialog.getExistingDirectory(self, tr("group_output"))
         if path:
             self.output_path.setText(path)
+
+    def on_input_dropped(self, path):
+        """Handle drag and drop detection"""
+        if not path: return
+        
+        # Auto-detect type
+        ext = os.path.splitext(path)[1].lower()
+        if ext in ['.mp4', '.mov', '.avi', '.mkv']:
+            self.radio_video.setChecked(True)
+        else:
+            self.radio_images.setChecked(True)
             
     # Getters/Setters pour la configuration
     def get_input_path(self): return self.input_path.text()

@@ -8,6 +8,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import pyqtSignal, Qt
 from app.core.i18n import tr
 from app.core.system import resolve_binary
+from app.gui.widgets.drop_line_edit import DropLineEdit
 
 class BrushTab(QWidget):
     """Onglet de configuration Brush"""
@@ -139,7 +140,7 @@ class BrushTab(QWidget):
         manual_layout = QFormLayout()
         
         input_layout = QHBoxLayout()
-        self.input_path = QLineEdit()
+        self.input_path = DropLineEdit()
         self.btn_browse_input = QPushButton("...")
         self.btn_browse_input.setMaximumWidth(40)
         self.btn_browse_input.clicked.connect(self.browse_input)

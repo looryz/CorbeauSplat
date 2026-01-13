@@ -74,7 +74,14 @@ class SuperSplatEngine:
             # We use a custom handler to enable CORS, otherwise SuperSplat can't fetch local files
             class CORSRequestHandler(http.server.SimpleHTTPRequestHandler):
                 def end_headers(self):
-                    self.send_header('Access-Control-Allow-Origin', '*')
+                    # Restrict CORS to localhost for security
+                    origin = self.headers.get('Origin')
+                    if origin and "localhost" in origin:
+                         self.send_header('Access-Control-Allow-Origin', origin)
+                    else:
+                         # Default fallback for local dev if origin is missing or strict mode
+                         self.send_header('Access-Control-Allow-Origin', 'http://localhost:3000')
+                    
                     super().end_headers()
                 
                 # Silent log
